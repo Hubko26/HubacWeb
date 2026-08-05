@@ -17,6 +17,7 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; }
+[id] { scroll-margin-top: 4.5rem; } /* kotvy neskočia pod lepiacu hlavičku */
 body {
   font-family: var(--body);
   color: var(--ink);
@@ -105,6 +106,29 @@ h1 em { font-style: normal; color: var(--accent); }
 .topbar__nav a:hover { opacity: 1; color: var(--accent); }
 .topbar__actions { display: flex; align-items: center; gap: 1.2rem; }
 .topbar__phone { font-weight: 700; font-size: .9rem; text-decoration: none; white-space: nowrap; }
+
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 42px;
+  height: 42px;
+  padding: 8px;
+  background: none;
+  border: 1px solid rgba(255,255,255,.3);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+.nav-toggle span {
+  display: block;
+  height: 2px;
+  background: var(--white);
+  transition: transform .25s, opacity .25s;
+}
+.topbar.menu-open .nav-toggle span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.topbar.menu-open .nav-toggle span:nth-child(2) { opacity: 0; }
+.topbar.menu-open .nav-toggle span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
 /* ============ BOČNÁ NAVIGÁCIA ============ */
 .side-nav {
@@ -270,6 +294,16 @@ h1 em { font-style: normal; color: var(--accent); }
 .form__consent input { margin-top: .2em; }
 .form__row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 .form__row label { margin-bottom: 1rem; }
+.form__hp { position: absolute; left: -9999px; opacity: 0; height: 0; } /* honeypot proti spamu */
+.form__status {
+  margin-top: .9rem;
+  padding: .8em 1em;
+  border-radius: var(--radius);
+  font-size: .85rem;
+  font-weight: 600;
+}
+.form__status--ok { background: #e8f2e4; color: #2c5e22; }
+.form__status--err { background: #f7e5e0; color: #9c2e14; }
 
 /* ============ BEŽIACI PÁS ============ */
 .marquee {
@@ -524,6 +558,8 @@ h1 em { font-style: normal; color: var(--accent); }
 .footer__contact { display: flex; flex-direction: column; gap: .3rem; text-align: right; }
 .footer__contact a { color: var(--white); text-decoration: none; font-weight: 600; }
 .footer__contact a:hover { color: var(--accent); }
+.footer__legal { grid-column: 1 / -1; font-size: .78rem; }
+.footer__legal a { color: inherit; }
 .footer__copy { grid-column: 1 / -1; font-size: .78rem; border-top: 1px solid #2c2a27; padding-top: 1.2rem; }
 
 /* ============ MOBILNÁ LIŠTA ============ */
@@ -553,22 +589,60 @@ h1 em { font-style: normal; color: var(--accent); }
   justify-content: center;
   padding: 2rem;
 }
-.lightbox img { max-width: 92vw; max-height: 88vh; object-fit: contain; border-radius: var(--radius); }
-.lightbox button {
+.lightbox figure { display: flex; flex-direction: column; align-items: center; gap: .8rem; }
+.lightbox img { max-width: 88vw; max-height: 82vh; object-fit: contain; border-radius: var(--radius); }
+.lightbox figcaption {
+  display: flex;
+  gap: 1.2rem;
+  align-items: baseline;
+  color: #cfc9bf;
+  font-size: .85rem;
+}
+.lightbox__counter { color: #8b857b; font-variant-numeric: tabular-nums; }
+.lightbox__close, .lightbox__nav {
   position: absolute;
-  top: 1rem;
-  right: 1.4rem;
   background: none;
   border: none;
   color: var(--white);
-  font-size: 2.6rem;
   cursor: pointer;
   line-height: 1;
+  padding: .4em;
 }
+.lightbox__close { top: 1rem; right: 1.4rem; font-size: 2.6rem; }
+.lightbox__nav {
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 3.4rem;
+  padding: .4em .35em;
+  opacity: .75;
+}
+.lightbox__nav:hover { opacity: 1; }
+.lightbox__nav--prev { left: .8rem; }
+.lightbox__nav--next { right: .8rem; }
 
 /* ============ RESPONZÍVNOSŤ ============ */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .marquee__track { animation: none; }
+  *, *::before, *::after { transition: none !important; }
+}
+
 @media (max-width: 960px) {
   .topbar__nav { display: none; }
+  .nav-toggle { display: flex; }
+  .topbar.menu-open .topbar__nav {
+    display: flex;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    gap: 0;
+    background: var(--dark);
+    border-top: 1px solid #2c2a27;
+    padding: .5rem 0 1rem;
+  }
+  .topbar.menu-open .topbar__nav a { padding: .9rem clamp(1rem, 4vw, 3rem); }
   .hero__inner { grid-template-columns: 1fr; }
   .callback-card { transform: none; }
   .stats { grid-template-columns: repeat(2, 1fr); gap: 2rem 1rem; }

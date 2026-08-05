@@ -6,6 +6,15 @@
 <title>Stavebné práce Banská Bystrica | Hubač — nezáväzná ponuka zdarma</title>
 <meta name="description" content="Stavebné práce v Banskej Bystrici a okolí. Murárske práce, obklady, dlažby, zámková dlažba, fasády, rekonštrukcie. Obhliadka a nacenenie zdarma.">
 <meta name="keywords" content="stavebné práce Banská Bystrica, murárske práce, obklady a dlažby, zámková dlažba, fasády, rekonštrukcie, Hubač">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<!-- Náhľad pri zdieľaní (og:url a og:image prepísať po nasadení vlastnej domény) -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Stavebné práce Banská Bystrica | Hubač">
+<meta property="og:description" content="Murárske práce, obklady, dlažby, fasády a rekonštrukcie v Banskej Bystrici a okolí. Obhliadka a nacenenie zdarma.">
+<meta property="og:image" content="https://hubko26.github.io/HubacWeb/img/fasada-tehla.jpg">
+<meta property="og:url" content="https://hubko26.github.io/HubacWeb/">
+<meta property="og:locale" content="sk_SK">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -25,6 +34,7 @@
   <div class="topbar__actions">
     <a href="tel:+421905637049" class="topbar__phone">+421 905 637 049</a>
     <a href="#dopyt" class="btn btn--accent btn--small">Dopyt</a>
+    <button class="nav-toggle" aria-label="Otvoriť menu" aria-expanded="false"><span></span><span></span><span></span></button>
   </div>
 </header>
 
@@ -65,8 +75,10 @@
       <form class="form" data-form="callback">
         <label>Meno *<input type="text" name="meno" required placeholder="Ján Novák"></label>
         <label>Telefón *<input type="tel" name="telefon" required placeholder="+421 900 000 000"></label>
-        <label class="form__consent"><input type="checkbox" required> Súhlasím so spracovaním osobných údajov. *</label>
+        <input type="text" name="_honey" class="form__hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <label class="form__consent"><input type="checkbox" required> Súhlasím so <a href="ochrana-osobnych-udajov.html" target="_blank">spracovaním osobných údajov</a>. *</label>
         <button type="submit" class="btn btn--accent btn--block">Chcem, aby ste mi zavolali</button>
+        <p class="form__status" hidden></p>
       </form>
       <p class="callback-card__note">Zdarma · Ozveme sa do 24 hodín</p>
     </div>
@@ -264,8 +276,10 @@
         </div>
         <label>E-mail<input type="email" name="email" placeholder="vas@email.sk"></label>
         <label>Čo potrebujete? (voliteľné)<textarea name="sprava" rows="4" placeholder="Krátky popis zákazky — dlažba, rekonštrukcia, fasáda…"></textarea></label>
-        <label class="form__consent"><input type="checkbox" required> Súhlasím so spracovaním osobných údajov za účelom vybavenia dopytu. *</label>
+        <input type="text" name="_honey" class="form__hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <label class="form__consent"><input type="checkbox" required> Súhlasím so <a href="ochrana-osobnych-udajov.html" target="_blank">spracovaním osobných údajov</a> za účelom vybavenia dopytu. *</label>
         <button type="submit" class="btn btn--accent btn--block">Odoslať nezáväzný dopyt</button>
+        <p class="form__status" hidden></p>
       </form>
       <p class="callback-card__note">Do 24 hodín · Obhliadka zdarma · Bežné zákazky bez zálohy</p>
     </div>
@@ -282,6 +296,7 @@
     <a href="tel:+421905637049">+421 905 637 049</a>
     <a href="mailto:jhubko66@gmail.com">jhubko66@gmail.com</a>
   </div>
+  <p class="footer__legal">Hubač — stavebné práce · IČO: [doplniť] · DIČ: [doplniť] · Sídlo: [doplniť], Banská Bystrica · <a href="ochrana-osobnych-udajov.html">Ochrana osobných údajov</a></p>
   <p class="footer__copy">© <span id="rok"></span> Hubač — stavebné práce. Všetky práva vyhradené.</p>
 </footer>
 
@@ -292,7 +307,15 @@
 </div>
 
 <!-- lightbox -->
-<div class="lightbox" id="lightbox" hidden><img src="" alt=""><button aria-label="Zavrieť">×</button></div>
+<div class="lightbox" id="lightbox" hidden>
+  <button class="lightbox__nav lightbox__nav--prev" aria-label="Predchádzajúca fotka">‹</button>
+  <figure>
+    <img src="" alt="">
+    <figcaption><span class="lightbox__caption"></span><span class="lightbox__counter"></span></figcaption>
+  </figure>
+  <button class="lightbox__nav lightbox__nav--next" aria-label="Ďalšia fotka">›</button>
+  <button class="lightbox__close" aria-label="Zavrieť">×</button>
+</div>
 
 <script src="js/main.js"></script>
 </body>

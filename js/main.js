@@ -63,42 +63,92 @@ if (sideLinks.length) {
   updateNavColors();
 }
 
-// ===== Formuláre (mailto — statický web bez backendu) =====
+// ===== Mobilné menu =====
+const topbar = document.querySelector(".topbar");
+const navToggle = document.querySelector(".nav-toggle");
+navToggle.addEventListener("click", () => {
+  const open = topbar.classList.toggle("menu-open");
+  navToggle.setAttribute("aria-expanded", open);
+  navToggle.setAttribute("aria-label", open ? "Zavrieť menu" : "Otvoriť menu");
+});
+document.querySelectorAll(".topbar__nav a").forEach((a) =>
+  a.addEventListener("click", () => {
+    topbar.classList.remove("menu-open");
+    navToggle.setAttribute("aria-expanded", "false");
+  })
+);
+
+// ===== Formuláre (FormSubmit AJAX — statický web bez backendu) =====
 document.querySelectorAll("form[data-form]").forEach((form) => {
-  form.addEventListener("submit", (e) => {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
+    const status = form.querySelector(".form__status");
+    const button = form.querySelector("button[type=submit]");
     const d = new FormData(form);
+    if (d.get("_honey")) return; // spam bot
     const typ = form.dataset.form === "callback" ? "Prosím o spätné zavolanie" : "Nezáväzný dopyt z webu";
-    const body = [
-      typ,
-      "",
-      "Meno: " + (d.get("meno") || ""),
-      "Telefón: " + (d.get("telefon") || ""),
-      d.get("email") ? "E-mail: " + d.get("email") : null,
-      d.get("sprava") ? "\nSpráva:\n" + d.get("sprava") : null,
-    ].filter(Boolean).join("\n");
-    window.location.href =
-      "mailto:jhubko66@gmail.com?subject=" + encodeURIComponent(typ + " — " + (d.get("meno") || "")) +
-      "&body=" + encodeURIComponent(body);
+    button.disabled = true;
+    button.dataset.label = button.textContent;
+    button.textContent = "Odosielam…";
+    try {
+      const res = await fetch("https://formsubmit.co/ajax/jhubko66@gmail.com", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          _subject: typ + " — " + (d.get("meno") || ""),
+          _template: "table",
+          Typ: typ,
+          Meno: d.get("meno") || "",
+          Telefon: d.get("telefon") || "",
+          Email: d.get("email") || "",
+          Sprava: d.get("sprava") || "",
+        }),
+      });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      status.textContent = "Ďakujeme! Dopyt je odoslaný — ozveme sa do 24 hodín.";
+      status.className = "form__status form__status--ok";
+      form.reset();
+    } catch (err) {
+      status.textContent = "Odoslanie zlyhalo. Zavolajte nám prosím na +421 905 637 049 alebo napíšte na jhubko66@gmail.com.";
+      status.className = "form__status form__status--err";
+    }
+    status.hidden = false;
+    button.disabled = false;
+    button.textContent = button.dataset.label;
   });
 });
 
-// ===== Galéria / lightbox =====
+// ===== Galéria / lightbox s listovaním =====
 const lightbox = document.getElementById("lightbox");
 const lightboxImg = lightbox.querySelector("img");
-document.querySelectorAll(".gallery__grid img").forEach((img) => {
-  img.addEventListener("click", () => {
-    lightboxImg.src = img.src;
-    lightboxImg.alt = img.alt;
-    lightbox.hidden = false;
-    document.body.style.overflow = "hidden";
-  });
-});
+const lightboxCaption = lightbox.querySelector(".lightbox__caption");
+const lightboxCounter = lightbox.querySelector(".lightbox__counter");
+const galleryImgs = [...document.querySelectorAll(".gallery__grid img")];
+let lightboxIndex = 0;
+
+const showLightbox = (i) => {
+  lightboxIndex = (i + galleryImgs.length) % galleryImgs.length;
+  const img = galleryImgs[lightboxIndex];
+  lightboxImg.src = img.src;
+  lightboxImg.alt = img.alt;
+  lightboxCaption.textContent = img.alt;
+  lightboxCounter.textContent = (lightboxIndex + 1) + " / " + galleryImgs.length;
+  lightbox.hidden = false;
+  document.body.style.overflow = "hidden";
+};
 const closeLightbox = () => {
   lightbox.hidden = true;
   document.body.style.overflow = "";
 };
-lightbox.addEventListener("click", closeLightbox);
+
+galleryImgs.forEach((img, i) => img.addEventListener("click", () => showLightbox(i)));
+lightbox.querySelector(".lightbox__nav--prev").addEventListener("click", (e) => { e.stopPropagation(); showLightbox(lightboxIndex - 1); });
+lightbox.querySelector(".lightbox__nav--next").addEventListener("click", (e) => { e.stopPropagation(); showLightbox(lightboxIndex + 1); });
+lightbox.querySelector(".lightbox__close").addEventListener("click", (e) => { e.stopPropagation(); closeLightbox(); });
+lightbox.addEventListener("click", (e) => { if (e.target === lightbox) closeLightbox(); });
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && !lightbox.hidden) closeLightbox();
+  if (lightbox.hidden) return;
+  if (e.key === "Escape") closeLightbox();
+  if (e.key === "ArrowLeft") showLightbox(lightboxIndex - 1);
+  if (e.key === "ArrowRight") showLightbox(lightboxIndex + 1);
 });
