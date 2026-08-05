@@ -126,9 +126,10 @@ h1 em { font-style: normal; color: var(--accent); }
   font-weight: 600;
   letter-spacing: .25em;
   text-transform: uppercase;
-  color: #8b857b;
+  color: #38342d;
   transition: color .25s;
 }
+.side-nav a.on-dark { color: #f5f2ec; }
 .side-nav a::before {
   content: "";
   width: 1.4rem;
@@ -141,11 +142,16 @@ h1 em { font-style: normal; color: var(--accent); }
   opacity: 0;
   transform: translateX(-.4em);
   transition: opacity .25s, transform .25s;
+  /* vlastný podklad — čitateľné aj ponad fotky */
+  background: rgba(26, 25, 23, .88);
+  color: #f5f2ec;
+  padding: .3em .7em .28em;
+  border-radius: 3px;
 }
 .side-nav a:hover span { opacity: .7; transform: none; }
 .side-nav a.is-active { color: var(--accent); }
 .side-nav a.is-active::before { width: 2.2rem; }
-.side-nav a.is-active span { opacity: 1; transform: none; color: #8b857b; }
+.side-nav a.is-active span { opacity: 1; transform: none; }
 @media (max-width: 1400px) { .side-nav { display: none; } }
 
 /* ============ HERO ============ */

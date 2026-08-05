@@ -39,6 +39,30 @@ if (sideLinks.length) {
   });
 }
 
+// ===== Bočná navigácia — farba textu podľa podkladu =====
+const DARK_AREAS = ".hero, .marquee, .stats, .section--dark, .photo-cta, .footer";
+const updateNavColors = () => {
+  sideLinks.forEach((a) => {
+    const r = a.getBoundingClientRect();
+    if (!r.height) return;
+    const behind = document
+      .elementsFromPoint(r.left + r.width / 2, r.top + r.height / 2)
+      .find((el) => !el.closest(".side-nav"));
+    a.classList.toggle("on-dark", !!(behind && behind.closest(DARK_AREAS)));
+  });
+};
+if (sideLinks.length) {
+  let navTick = false;
+  const requestNavUpdate = () => {
+    if (navTick) return;
+    navTick = true;
+    requestAnimationFrame(() => { updateNavColors(); navTick = false; });
+  };
+  window.addEventListener("scroll", requestNavUpdate, { passive: true });
+  window.addEventListener("resize", requestNavUpdate, { passive: true });
+  updateNavColors();
+}
+
 // ===== Formuláre (mailto — statický web bez backendu) =====
 document.querySelectorAll("form[data-form]").forEach((form) => {
   form.addEventListener("submit", (e) => {
