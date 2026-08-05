@@ -78,6 +78,19 @@ document.querySelectorAll(".topbar__nav a").forEach((a) =>
   })
 );
 
+// ===== Slovenské validačné hlášky (namiesto anglických z prehliadača) =====
+document.querySelectorAll("form[data-form] input, form[data-form] textarea").forEach((field) => {
+  field.addEventListener("invalid", () => {
+    const v = field.validity;
+    let msg = "Vyplňte prosím toto pole.";
+    if (v.valueMissing && field.type === "checkbox") msg = "Na odoslanie je potrebný súhlas so spracovaním údajov.";
+    else if (v.typeMismatch && field.type === "email") msg = "Zadajte platnú e-mailovú adresu.";
+    else if (v.typeMismatch || v.patternMismatch) msg = "Zadaný údaj nemá správny tvar.";
+    field.setCustomValidity(msg);
+  });
+  field.addEventListener("input", () => field.setCustomValidity(""));
+});
+
 // ===== Formuláre (FormSubmit AJAX — statický web bez backendu) =====
 document.querySelectorAll("form[data-form]").forEach((form) => {
   form.addEventListener("submit", async (e) => {
